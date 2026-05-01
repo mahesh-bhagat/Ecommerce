@@ -1,5 +1,7 @@
 package com.ecommerce.order.external;
 
+import java.util.Map;
+
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -29,6 +31,24 @@ public class ProductClient {
                 .retrieve()
                 .bodyToMono(ProductResponseDTO.class)
                 .block();
+    }
+
+    /**
+     * Get instance info - demonstrates which instance handled the request
+     * This is useful for load balancing testing!
+     */
+    public Map<String, String> getInstanceInfo() {
+        System.out.println("Getting instance info from PRODUCT-SERVICE (Load Balancing demo)...");
+        
+        @SuppressWarnings("unchecked")
+        Map<String, String> instanceInfo = webClientBuilder.build()
+                .get()
+                .uri("http://PRODUCT-SERVICE/products/instance-info")
+                .retrieve()
+                .bodyToMono(Map.class)
+                .block();
+        
+        return instanceInfo;
     }
 
     /**

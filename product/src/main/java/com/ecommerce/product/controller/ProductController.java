@@ -1,21 +1,36 @@
 package com.ecommerce.product.controller;
 
 import java.util.List;
+import java.util.Map;
 
-import org.springframework.http.*;
-import org.springframework.web.bind.annotation.*;
-
-import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.ecommerce.product.dto.ProductRequestDTO;
 import com.ecommerce.product.dto.ProductResponseDTO;
 import com.ecommerce.product.service.ProductService;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/products")
 public class ProductController {
 
     private final ProductService service;
+    
+    // Inject server port to identify which instance handled the request
+    @Value("${server.port}")
+    private int serverPort;
 
     public ProductController(ProductService service) {
         this.service = service;
@@ -36,10 +51,22 @@ public class ProductController {
         return ResponseEntity.ok(service.getAllProducts());
     }
 
-    // GET BY ID
+    // GET BY ID - Returns instance info for load balancing demo
     @GetMapping("/{id}")
     public ResponseEntity<ProductResponseDTO> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(service.getProductById(id));
+        ProductResponseDTO product = service.getProductById(id);
+        // We could add instance info here if we had a custom DTO
+        return ResponseEntity.ok(product);
+    }
+    
+    // INSTANCE INFO - Returns which instance handled the request
+    @GetMapping("/instance-info")
+    public ResponseEntity<Map<String, String>> getInstanceInfo() {
+        return ResponseEntity.ok(Map.of(
+            "serviceName", "product-service",
+            "instancePort", String.valueOf(serverPort),
+            "message", "This response from instance running on port " + serverPort
+        ));
     }
 
     // GET BY NAME
