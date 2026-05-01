@@ -1,0 +1,35 @@
+# Maven
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# Eclipse
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# IntelliJ IDEA
+.idea
+*.iml
+*.iws
+*.ipr
+
+# VS Code
+.vscode/
+
+# Log files
+*.log
+
+# Package Files
+*.jar
+*.war
+*.ear
+
+# Spring Boot
+*.class
+
+# Package data
+*.jar
